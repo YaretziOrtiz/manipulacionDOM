@@ -1,13 +1,16 @@
 'use strict';
 
-const formTarea = document.querySelector('#formTarea');
-const inputTitulo = document.querySelector('#inputTitulo');
-const selectTag = document.querySelector('#selectTag');
-const listaTareas = document.querySelector('#listaTareas');
+let filtroActivo = "all";
 
-// escuchar el submit del formulario para agregar una nueva tarea
-formTarea.addEventListener('submit', function(e) {
+
+// -------- 1. AGREGAR TAREAS --------
+document.querySelector('#formTarea').addEventListener('submit', function(e) {
+
     e.preventDefault();
+
+    const inputTitulo = document.querySelector('#inputTitulo');
+    const selectTag = document.querySelector('#selectTag');
+    const listaTareas = document.querySelector('#listaTareas');
 
     const titulo = inputTitulo.value.trim();
     const tag = selectTag.value;
@@ -37,4 +40,49 @@ formTarea.addEventListener('submit', function(e) {
     listaTareas.appendChild(nuevaTarea);
 
     inputTitulo.value = '';
+
+    actualizarLista();
+
 });
+
+
+// -------- ACCIONES DE LOS BOTONES --------
+document.querySelector('#listaTareas').addEventListener('click', function(e){
+
+    const boton = e.target.closest('button');
+    if(!boton) return;
+
+    const accion = boton.dataset.action;
+    const tarjeta = boton.closest('.card');
+
+    // 2. ELIMINAR TAREA
+    if(accion === 'del'){
+        tarjeta.remove();
+    }
+
+    // 3. MARCAR COMO COMPLETADA
+    if(accion === 'done'){
+        tarjeta.classList.toggle('is-done');
+    }
+
+    // 4. MARCAR COMO FAVORITA
+    if(accion === 'fav'){
+
+        const esFav = tarjeta.dataset.fav === "1";
+
+        if(esFav){
+            tarjeta.dataset.fav = "0";
+            boton.textContent = "☆";
+            boton.classList.remove("is-fav");
+        }else{
+            tarjeta.dataset.fav = "1";
+            boton.textContent = "★";
+            boton.classList.add("is-fav");
+        }
+
+    }
+
+    actualizarLista();
+
+});
+
